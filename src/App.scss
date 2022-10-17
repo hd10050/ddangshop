@@ -38,7 +38,7 @@
   clear: both;  
 }
 
-.main {
+.mainContent {
   min-height: calc(100vh - 180px);
 }
 
@@ -61,6 +61,19 @@
 .footerTitle {
   font-weight: 600;
   font-size: 20px;
+}
+
+.start {
+  opacity: 0;
+}
+
+.end {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+.cursorPointer{
+  cursor: pointer;
 }
 
 @keyframes App-logo-spin {
