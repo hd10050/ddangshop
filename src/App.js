@@ -28,7 +28,6 @@ function App() {
 
   let navigate = useNavigate();
 
-
   return (
     <div className="App">
       {/* header */}
