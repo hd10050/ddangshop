@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { firestore } from "./firebase";
 import { collection, getDoc, getDocs, query, where, orderBy } from 'firebase/firestore'
 import { ListGroup, Nav, Navbar, Container, Carousel } from 'react-bootstrap';
+import { Routes, Route, useNavigate, Outlet } from 'react-router-dom'
 
 function App() {
   useEffect(() => {
@@ -24,6 +25,14 @@ function App() {
 
   return (
     <div className="App">
+
+      {/** ROUTER */}
+      {/* <Routes>
+        <Route path="/" element={<Home shoes={shoes} setShoes={setShoes} />} />
+        <Route path="/detail/:id" element={<Detail shoes={shoes} />} />
+        <Route path="*" element={<div>404</div>} />
+      </Routes> */}
+
       {/* header */}
       <div className="fixedclear">
         {/* 내정보, 로그인/로그아웃, 장바구니 */}
@@ -95,7 +104,7 @@ function App() {
           </div>
         </div>
       </div>
-      
+
       {/* footer */}
       <footer className="footer">
         <div className="footerContents">
