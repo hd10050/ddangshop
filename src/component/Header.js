@@ -11,8 +11,8 @@ function Header() {
                 {/* 내정보, 로그인/로그아웃, 장바구니 */}
                 <div style={{ float: 'right' }} className="cursorPointer">
                     <ListGroup horizontal>
-                        <ListGroup.Item>회원가입</ListGroup.Item>
-                        <ListGroup.Item>로그인</ListGroup.Item>
+                        <ListGroup.Item onClick={()=>{ navigate("/join") }}>회원가입</ListGroup.Item>
+                        <ListGroup.Item onClick={()=>{ navigate("/login") }}>로그인</ListGroup.Item>
                         <ListGroup.Item onClick={()=>{ navigate("/cart") }}>장바구니</ListGroup.Item>
                     </ListGroup>
                 </div>
@@ -26,7 +26,7 @@ function Header() {
             </div>
 
             {/* nev */}
-            <Navbar bg="light" variant="light">
+            <Navbar bg="light" variant="light" className="mb-5">
                 <Container >
                     <Nav className="me-auto" >
                         <Nav.Link href="#home">전체보기</Nav.Link>

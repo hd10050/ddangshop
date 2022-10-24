@@ -4,6 +4,8 @@ import Footer from "./component/Footer"
 import Home from "./routes/Home"
 import Detail from "./routes/Detail"
 import Cart from "./routes/Cart"
+import Join from "./routes/Join"
+import Login from "./routes/Login"
 import { useEffect } from "react";
 import { firestore } from "./firebase";
 import { collection, getDoc, getDocs, query, where, orderBy } from 'firebase/firestore'
@@ -39,6 +41,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/join" element={<Join />} />
+          <Route path="/login" element={<Login />} />
           {/* <Route path="/detail/:id" element={<Detail shoes={shoes} />} /> */}
           <Route path="*" element={<div>404</div>} />
         </Routes>
