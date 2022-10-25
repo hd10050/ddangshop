@@ -1,17 +1,23 @@
-import { Form, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUid } from '../store/userSlice';
 
 function Login() {
     let [formEmail, setEmail] = useState("");
     let [formPsw, setPassword] = useState("");
-    let navigate = useNavigate();
 
+    let dispatch = useDispatch();
+    const [cookies, setCookie] = useCookies(['user']);
+    let navigate = useNavigate();
+    
     return (
         <div className="container">
             <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Email address</label>
+                <label className="col-sm-2 col-form-label">Email</label>
                 <div className="col-sm-10">
                     <input type="email" className="form-control" onChange={(e) => {
                         setEmail(e.target.value);
@@ -36,6 +42,8 @@ function Login() {
         const password = formPsw;
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
+                dispatch(setUid(userCredential.user.uid));
+                setCookie('user', userCredential.user.uid);
                 navigate("/");
             })
             .catch((error) => {

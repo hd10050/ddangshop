@@ -4,14 +4,24 @@ import { configureStore, createSlice } from '@reduxjs/toolkit'
  * 유저 정보
  */
 let user = createSlice({
-    name: 'user',
-    initialState: 'song',
+    name: 'auth',
+    initialState: {
+        userName: null,
+        userEmail: "@",
+        uid: null,
+    },
     reducers: {
-        changeName(state){
-            return 'change ' + state; 
-        }
+        setUserName(state, action) {
+            state.userName = action.payload;
+        },
+        setUid(state, action) {
+            state.uid = action.payload;
+        },
+        setUserEmail(state, action) {
+            state.userEmail = action.payload;
+        },
     }
 })
-export let { changeName } = user.actions
+export let { setUserName, setUid, setUserEmail } = user.actions
 
 export default user;
