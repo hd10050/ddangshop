@@ -1,5 +1,6 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit'
 import user from './store/userSlice.js'
+import post from './store/postSlice.js'
 
 // let cartItm = createSlice({
 //     name: 'cartItm',
@@ -61,6 +62,7 @@ import user from './store/userSlice.js'
 
 export default configureStore({
     reducer: {
-        user: user.reducer
+        user: user.reducer,
+        post: post.reducer,
     }
 }) 

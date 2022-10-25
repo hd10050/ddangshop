@@ -7,7 +7,7 @@ import Cart from "./routes/Cart"
 import Join from "./routes/Join"
 import Login from "./routes/Login"
 import MyPage from "./routes/MyPage"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { firestore } from "./firebase";
 import { collection, getDoc, getDocs, query, where, orderBy } from 'firebase/firestore'
 import { Routes, Route, Outlet, useNavigate } from 'react-router-dom'
