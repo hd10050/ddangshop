@@ -1,46 +1,21 @@
 import { useEffect, useState } from 'react';
 import { ListGroup, Nav, Navbar, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUid, setUserName, setUserEmail } from '.././store/userSlice';
+// import { useCookies } from 'react-cookie';
+import { setUid, setUserName, setUserEmail, setUser } from '.././store/userSlice';
 import { getAuth, signOut } from "firebase/auth";
 
-
-function Header() {
-    let navigate = useNavigate();
-    let dispatch = useDispatch();
-    const [cookies, setCookie, removeCookie] = useCookies(['user']);
-    let rs = useSelector(state => state.user);
-    let [isloggin, setIsloggion] = useState(false);
-
-    /**
-     * 로그인 여부 관련
-     */
-    useEffect(() => {
-        if (cookies.user !== undefined) {
-            dispatch(setUid(cookies));      
-            // dispatch(setUserEmail());
-            // dispatch(setUserName());         
-            setIsloggion(true);         
-            
-        }
-        else {
-            dispatch(setUid(null));
-            // dispatch(setUserEmail(null));
-            // dispatch(setUserName(null));   
-            setIsloggion(false);
-        }
-    });
+function Header(props) {
+    let navigate = useNavigate();    
 
     return (
-        <div className="container">
+        <div className="container mt-3">
             <div className="fixedclear">
                 {
-                    isloggin ?
+                    props.isloggin ?
                         <div style={{ float: 'right' }} className="cursorPointer">
                             <ListGroup horizontal>
-                                <ListGroup.Item onClick={() => { navigate("/mypage") }}>{rs.userName}</ListGroup.Item>
+                                <ListGroup.Item onClick={() => { navigate("/mypage") }}>{JSON.parse(props.userObj).name}</ListGroup.Item>
                                 <ListGroup.Item onClick={() => { logOut() }}>로그아웃</ListGroup.Item>
                                 <ListGroup.Item onClick={() => { navigate("/cart") }}>장바구니</ListGroup.Item>
                             </ListGroup>
@@ -80,13 +55,16 @@ function Header() {
     function logOut() {
         const auth = getAuth();
         signOut(auth).then(() => {
-            console.log("로그아웃");
-            dispatch(setUid(null));
+            // 로그아웃시 state의 유저 정보, 쿠키의 uid 초기화
+            // dispatch(setUid(null));
             // dispatch(setUserEmail(null));
-            // dispatch(setUserName(null));   
-            setIsloggion(false);            
-            removeCookie("user", navigate("/"));
+            // dispatch(setUserName(null));
+            // setIsloggion(false);
+            //removeCookie("user", navigate("/"));
 
+            props.setIsloggion(false);
+            localStorage.clear();
+            navigate("/")
         }).catch((error) => {
             alert("로그아웃에 실패했습니다. " + error);
             console.log(error);

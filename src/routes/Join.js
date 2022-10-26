@@ -6,7 +6,6 @@ import Modal from ".././component/Modal"
 import SearchAddress from '../component/SearchAddress';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPost } from '../store/postSlice';
-import { addDoc, collection } from "firebase/firestore";
 import { firestore } from ".././firebase";
 
 function Join() {
@@ -218,6 +217,7 @@ function Join() {
             .then(async (userCredential) => {
                 try {
                     firestore.collection("USER").doc(userCredential.user.uid).set({
+                        email: email,
                         name: name,
                         phone1: phone1,
                         phone2: phone2,

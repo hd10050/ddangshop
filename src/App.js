@@ -8,7 +8,7 @@ import Join from "./routes/Join"
 import Login from "./routes/Login"
 import MyPage from "./routes/MyPage"
 import { useEffect, useState } from "react";
-import { firestore } from "./firebase";
+// import { useDispatch, useSelector } from 'react-redux';
 import { collection, getDoc, getDocs, query, where, orderBy } from 'firebase/firestore'
 import { Routes, Route, Outlet, useNavigate } from 'react-router-dom'
 
@@ -16,26 +16,44 @@ function App() {
 
   let navigate = useNavigate();
 
+  /**
+   * 로그인 여부
+   */
+  let [isloggin, setIsloggion] = useState(false);
+  let [userObj, setUserObj] = useState(false);
+  // let dispatch = useDispatch();
+  // const [cookies, setCookie, removeCookie] = useCookies(['user']);
+  // let rs = useSelector(state => state.user);
+
+  /**
+   * 로그인 여부 관련
+   */
   useEffect(() => {
-    const bucket = firestore.collection("PRODUCT");
-    bucket
-      .doc("F_001")
-      .get()
-      .then((doc) => {
-        // .exists를 써서 데이터가 있는 지 없는 지 확인
-        if (doc.exists) {
-          // 데이터를 콘솔에 찍어보기
-          // console.log(doc.data());
-        }
-      });
+    // if (cookies.user !== undefined) {
+    //     dispatch(setUid(cookies.user));
+    //     // 로그인시 state에 유저 정보 저장, 쿠키에 uid 저장                
+    //     setIsloggion(true);
+    // }
+    // else {
+    //     // dispatch(setUid(null));
+    //     setIsloggion(false);
+    // }
+    const _session_key = `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`;
+    // 로그인 정보 세션에서 확인
+    setIsloggion(sessionStorage.getItem(_session_key));
 
-  });
+    if (isloggin) {
+      // console.log(JSON.parse(sessionStorage.getItem(_session_key)));
+      // console.log(JSON.parse(sessionStorage.getItem("userInfo")));
+      setUserObj(sessionStorage.getItem("userInfo"));
+      console.log(userObj)
+    }
+  },);
 
- 
   return (
     <div className="App">
       {/* header */}
-      <Header />
+      <Header userObj={userObj} isloggin={isloggin} setIsloggion={setIsloggion} />
 
       {/* content */}
       <div className="mainContent">
@@ -55,8 +73,6 @@ function App() {
       <Footer />
     </div>
   )
-
-  
 }
 
 export default App;
