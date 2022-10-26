@@ -1,11 +1,13 @@
 import { Form, Button } from 'react-bootstrap';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from ".././component/Modal"
 import SearchAddress from '../component/SearchAddress';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPost } from '../store/postSlice';
+import { addDoc, collection } from "firebase/firestore";
+import { firestore } from ".././firebase";
 
 function Join() {
     const [modalVisible, setModalVisible] = useState(false)
@@ -22,8 +24,17 @@ function Join() {
     let [formPhone1, setPhone1] = useState("");
     let [formPhone2, setPhone2] = useState("");
     let [formPhone3, setPhone3] = useState("");
-    let [formAddress1, setAddress1] = useState("");
+    //let [formAddress1, setAddress1] = useState("");
     let [formAddress2, setAddress2] = useState("");
+    const emailRef = useRef();
+    const pswRef = useRef();
+    const nameRef = useRef();
+    const phone1Ref = useRef();
+    const phone2Ref = useRef();
+    const phone3Ref = useRef();
+    const addRef = useRef();
+
+
     let rs = useSelector(state => state.post);
     let dispach = useDispatch();
     let navigate = useNavigate();
@@ -32,14 +43,13 @@ function Join() {
         // post state 초기화
         dispach(setPost(null));
     }, [])
-    
 
     return (
         <div className="container">
             <div className="mb-3 row">
                 <label className="col-sm-3 col-form-label">이메일</label>
                 <div className="col-sm-9">
-                    <input type="email" className="form-control" placeholder="name@example.com"
+                    <input type="email" className="form-control" placeholder="name@example.com" ref={emailRef}
                         onChange={(e) => {
                             setEmail(e.target.value);
                         }} />
@@ -48,7 +58,7 @@ function Join() {
             <div className="mb-3 row">
                 <label className="col-sm-3 col-form-label">비밀번호</label>
                 <div className="col-sm-9">
-                    <input type="password" className="form-control"
+                    <input type="password" className="form-control" ref={pswRef}
                         onChange={(e) => {
                             setPassword(e.target.value);
                         }} />
@@ -57,7 +67,7 @@ function Join() {
             <div className="mb-3 row">
                 <label className="col-sm-3 col-form-label">이름</label>
                 <div className="col-sm-9">
-                    <input type="text" className="form-control"
+                    <input type="text" className="form-control" ref={nameRef}
                         onChange={(e) => {
                             setName(e.target.value);
                         }} />
@@ -66,19 +76,19 @@ function Join() {
             <div className="mb-3 row">
                 <label className="col-sm-3 col-form-label">전화번호</label>
                 <div className="col-sm-3">
-                    <input type="tel" className="form-control"
+                    <input type="tel" className="form-control" ref={phone1Ref}
                         onChange={(e) => {
                             setPhone1(e.target.value);
                         }} />
                 </div>
                 <div className="col-sm-3">
-                    <input type="tel" className="form-control"
+                    <input type="tel" className="form-control" ref={phone2Ref}
                         onChange={(e) => {
                             setPhone2(e.target.value);
                         }} />
                 </div>
                 <div className="col-sm-3">
-                    <input type="tel" className="form-control"
+                    <input type="tel" className="form-control" ref={phone3Ref}
                         onChange={(e) => {
                             setPhone3(e.target.value);
                         }} />
@@ -89,7 +99,7 @@ function Join() {
                 <div className="col-sm-7">
                     <input type="text" className="form-control" disabled={true} defaultValue={rs}
                         onChange={(e) => {
-                            setAddress1(e.target.value);
+                            //setAddress1(e.target.value);
                         }} />
                 </div>
                 <div className="col-sm-2">
@@ -99,7 +109,7 @@ function Join() {
             <div className="mb-3 row">
                 <label className="col-sm-3 col-form-label">상세주소</label>
                 <div className="col-sm-9">
-                    <input type="text" className="form-control"
+                    <input type="text" className="form-control" ref={addRef}
                         onChange={(e) => {
                             setAddress2(e.target.value);
                         }} />
@@ -121,14 +131,67 @@ function Join() {
         let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
         const email = formEmail;
         const password = formPsw;
+        const name = formName;
+        const phone1 = formPhone1;
+        const phone2 = formPhone2;
+        const phone3 = formPhone3;
+        //const add1 = formAddress1;
+        const add1 = rs;
+        const add2 = formAddress2;
 
         if (!regex.test(email)) {
             alert("이메일을 확인해 주세요.");
+            emailRef.current.focus();
             return;
         }
 
         if (password.length < 6) {
             alert("비밀번호는 6자리 이상 입니다.");
+            pswRef.current.focus();
+            return;
+        }
+
+        if (name.length < 1) {
+            alert("이름을 입력해주세요.");
+            nameRef.current.focus();
+            return;
+        }
+
+        if (phone1.length < 1) {
+            alert("전화번호를 입력해주세요.");
+            phone1Ref.current.focus();
+            return;
+        }
+        if (phone2.length < 1) {
+            alert("전화번호를 입력해주세요.");
+            phone2Ref.current.focus();
+            return;
+        }
+        if (phone3.length < 1) {
+            alert("전화번호를 입력해주세요.");
+            phone3Ref.current.focus();
+            return;
+        }
+        if (isNaN(phone1)) {
+            alert("전화번호는 숫자만 입력할 수 있습니다.");
+            phone1Ref.current.focus();
+            phone1Ref.current.value = "";
+            return;
+        }
+        if (isNaN(phone2)) {
+            alert("전화번호는 숫자만 입력할 수 있습니다.");
+            phone2Ref.current.focus();
+            return;
+        }
+        if (isNaN(phone3)) {
+            alert("전화번호는 숫자만 입력할 수 있습니다.");
+            phone3Ref.current.focus();
+            return;
+        }
+        
+        if (String(add1).length < 1 || add2.length < 1) {
+            alert("주소를 입력해주세요.");
+            addRef.current.focus();
             return;
         }
 
@@ -142,9 +205,33 @@ function Join() {
         const auth = getAuth();
         const email = formEmail;
         const password = formPsw;
+        const name = formName;
+        const phone1 = formPhone1;
+        const phone2 = formPhone2;
+        const phone3 = formPhone3;
+        //const add1 = formAddress1;
+        const add1 = rs;
+        const add2 = formAddress2;
+
 
         createUserWithEmailAndPassword(auth, email, password)
-            .then(() => {
+            .then(async (userCredential) => {
+                try {
+                    firestore.collection("USER").doc(userCredential.user.uid).set({
+                        name: name,
+                        phone1: phone1,
+                        phone2: phone2,
+                        phone3: phone3,
+                        add1: add1,
+                        add2: add2,
+                        access: '0',
+                    });
+                } catch (e) {
+                    alert("회원가입이 중단되었습니다. 에러코드 : " + e);
+                    console.log(e);
+                    return;
+                }
+
                 alert("회원가입이 완료되었습니다.");
 
                 // post state 초기화
@@ -155,14 +242,17 @@ function Join() {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                if (errorCode == "auth/email-already-in-use") {
+                    alert("중복된 이메일 입니다.");
+                    return;
+                }
+                else {
+                    alert("회원가입이 중단되었습니다. 에러코드 : " + errorCode);
+                }
                 console.log(errorCode);
                 console.log(errorMessage);
-                alert("회원가입이 중단되었습니다. 에러코드 : " + errorCode);
-                navigate("/");
             });
     }
 }
-
-
 
 export default Join;
