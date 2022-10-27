@@ -8,9 +8,10 @@ import Join from "./routes/Join"
 import Login from "./routes/Login"
 import MyPage from "./routes/MyPage"
 import { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { collection, getDoc, getDocs, query, where, orderBy } from 'firebase/firestore'
 import { Routes, Route, Outlet, useNavigate } from 'react-router-dom'
+import { setUser } from './store/userSlice';
 
 function App() {
 
@@ -21,14 +22,14 @@ function App() {
    */
   let [isloggin, setIsloggion] = useState(false);
   let [userObj, setUserObj] = useState(false);
-  // let dispatch = useDispatch();
+  let dispatch = useDispatch();
   // const [cookies, setCookie, removeCookie] = useCookies(['user']);
-  // let rs = useSelector(state => state.user);
+  let rs = useSelector(state => state.user);
 
   /**
    * 로그인 여부 관련
    */
-  useEffect(() => {
+  useEffect(() => {    
     // if (cookies.user !== undefined) {
     //     dispatch(setUid(cookies.user));
     //     // 로그인시 state에 유저 정보 저장, 쿠키에 uid 저장                
@@ -39,16 +40,21 @@ function App() {
     //     setIsloggion(false);
     // }
     const _session_key = `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`;
+
     // 로그인 정보 세션에서 확인
     setIsloggion(sessionStorage.getItem(_session_key));
 
-    if (isloggin) {
+    if (sessionStorage.getItem(_session_key)) {
       // console.log(JSON.parse(sessionStorage.getItem(_session_key)));
       // console.log(JSON.parse(sessionStorage.getItem("userInfo")));
       setUserObj(sessionStorage.getItem("userInfo"));
-      console.log(userObj)
+
+      if (rs === null || rs === undefined)
+        dispatch(setUser(sessionStorage.getItem("userInfo")));
     }
   },);
+
+  
 
   return (
     <div className="App">

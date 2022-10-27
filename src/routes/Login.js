@@ -19,7 +19,7 @@ function Login() {
     return (
         <div className="container">
             <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Email</label>
+                <label className="col-sm-2 col-form-label">이메일</label>
                 <div className="col-sm-10">
                     <input type="email" className="form-control" onChange={(e) => {
                         setEmail(e.target.value);
@@ -27,17 +27,23 @@ function Login() {
                 </div>
             </div>
             <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Password</label>
+                <label className="col-sm-2 col-form-label">비밀번호</label>
                 <div className="col-sm-10">
                     <input type="password" className="form-control"
                         onChange={(e) => {
                             setPassword(e.target.value);
+                        }}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter')
+                                loginUser();
                         }} />
                 </div>
             </div>
             <Button variant="light" onClick={() => { loginUser() }}>로그인</Button>
         </div>
     )
+
+
     function loginUser() {
         const auth = getAuth();
         const email = formEmail;
@@ -45,7 +51,7 @@ function Login() {
         setPersistence(auth, browserSessionPersistence)
             .then(() => {
                 return signInWithEmailAndPassword(auth, email, password)
-                    .then((userCredential) => {                        
+                    .then((userCredential) => {
                         const bucket = firestore.collection("USER");
                         bucket
                             .doc(userCredential.user.uid)
@@ -53,7 +59,7 @@ function Login() {
                             .then((doc) => {
                                 if (doc.exists) {
                                     // 로그인시 state에 유저 정보 저장, 쿠키에 uid 저장 
-                                    //  -> state와 쿠키 대신 session storage에 저장
+                                    //  -> 쿠키 대신 session storage에 저장
                                     sessionStorage.setItem("userInfo", JSON.stringify(doc.data()));
                                     dispatch(setUser(JSON.stringify(doc.data())));
                                     // dispatch(setUid(userCredential.user.uid));

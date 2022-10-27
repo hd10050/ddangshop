@@ -31,17 +31,24 @@ function Join() {
     const phone1Ref = useRef();
     const phone2Ref = useRef();
     const phone3Ref = useRef();
-    const addRef = useRef();
+    const add1Ref = useRef();
+    const add2Ref = useRef();
 
 
-    let rs = useSelector(state => state.post);
-    let dispach = useDispatch();
+    let postState = useSelector(state => state.post);
+    let dispatch = useDispatch();
     let navigate = useNavigate();
 
     useEffect(() => {
         // post state 초기화
-        dispach(setPost(null));
+        dispatch(setPost(null));
     }, [])
+
+    useEffect(() => {
+        if (add1Ref.current !== undefined) {
+            add1Ref.current.value = postState;
+        }
+    }, [postState])
 
     return (
         <div className="container">
@@ -96,7 +103,7 @@ function Join() {
             <div className="mb-3 row">
                 <label className="col-sm-3 col-form-label">주소</label>
                 <div className="col-sm-7">
-                    <input type="text" className="form-control" disabled={true} defaultValue={rs}
+                    <input type="text" className="form-control" disabled={true} ref={add1Ref}
                         onChange={(e) => {
                             //setAddress1(e.target.value);
                         }} />
@@ -108,7 +115,7 @@ function Join() {
             <div className="mb-3 row">
                 <label className="col-sm-3 col-form-label">상세주소</label>
                 <div className="col-sm-9">
-                    <input type="text" className="form-control" ref={addRef}
+                    <input type="text" className="form-control" ref={add2Ref}
                         onChange={(e) => {
                             setAddress2(e.target.value);
                         }} />
@@ -135,7 +142,7 @@ function Join() {
         const phone2 = formPhone2;
         const phone3 = formPhone3;
         //const add1 = formAddress1;
-        const add1 = rs;
+        const add1 = postState;
         const add2 = formAddress2;
 
         if (!regex.test(email)) {
@@ -180,17 +187,19 @@ function Join() {
         if (isNaN(phone2)) {
             alert("전화번호는 숫자만 입력할 수 있습니다.");
             phone2Ref.current.focus();
+            phone2Ref.current.value = "";
             return;
         }
         if (isNaN(phone3)) {
             alert("전화번호는 숫자만 입력할 수 있습니다.");
             phone3Ref.current.focus();
+            phone3Ref.current.value = "";
             return;
         }
-        
+
         if (String(add1).length < 1 || add2.length < 1) {
             alert("주소를 입력해주세요.");
-            addRef.current.focus();
+            add2Ref.current.focus();
             return;
         }
 
@@ -209,7 +218,7 @@ function Join() {
         const phone2 = formPhone2;
         const phone3 = formPhone3;
         //const add1 = formAddress1;
-        const add1 = rs;
+        const add1 = postState;
         const add2 = formAddress2;
 
 
@@ -217,6 +226,7 @@ function Join() {
             .then(async (userCredential) => {
                 try {
                     firestore.collection("USER").doc(userCredential.user.uid).set({
+                        uid: userCredential.user.uid,
                         email: email,
                         name: name,
                         phone1: phone1,
@@ -235,7 +245,7 @@ function Join() {
                 alert("회원가입이 완료되었습니다.");
 
                 // post state 초기화
-                dispach(setPost(null));
+                dispatch(setPost(null));
 
                 navigate("/");
             })
